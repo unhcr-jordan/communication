@@ -66,6 +66,7 @@ db<-as.data.frame(sapply(db,gsub,pattern="NA ",replacement=""))
 db<-as.data.frame(sapply(db,gsub,pattern=" NA",replacement=""))
 db<-as.data.frame(sapply(db,gsub,pattern="  ",replacement=" "))
 db<-as.data.frame(sapply(db,str_trim))
+
 write.csv(db,"stacked_unhcr.csv")
 
 delete<-sort(na.omit(master_key[,6]),decreasing=TRUE)
@@ -75,10 +76,13 @@ status<-rep("camp",length(reach[,1]))
 reach<-cbind(reach,status)
 status<-rep("host",length(db[,1]))
 db<-cbind(db,status)
+
 master_db<-rbind(reach,db)
 master_db<-as.data.frame(sapply(master_db,gsub,pattern=",",replacement=""))
 master_db<-as.data.frame(sapply(master_db,tolower))
 
 for (q in 1:length(names(master_db)))
 {master_db[,q]<-recode(master_db[,q],"'yes'=1;'no'=0;'null'=NA;'na'=NA")}
+
+
 write.csv(master_db,"merge_mass_com_final.csv")
