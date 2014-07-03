@@ -1,0 +1,215 @@
+---
+  title       : Mass Communication Survey - Jordan - 2014
+subtitle    : An analysis of refugee communication needs, channel and usage
+author      : UNHCR / REACH
+job         : 
+  framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+  
+  ## Objective of the survey 
+  
+  The "refugee communication survey" has been developped by UNHCR Jordan. The goals were:
+  > - Establish a baseline to measure future achievements of our communication strategy
+> - Establish coordination opportunities
+> - Define priorities in terms of needs and interventions.
+
+
+---
+  
+  ##  Content of the survey
+  
+  2 samples (of 400 respondants each) were randomly selected  in both camp and urban environment.
+
+> -  1. Communication needs: Establish main topics where there’s a lack of information (document, assistance, legal support, etc.) and the possible reasons for the gaps
+> -  2. Communication channels: Define  used channel (mobile, tv, radio, net, social networks, leaflet..) , how often they are used and how far they are trusted
+> -  3. Feedback mechanism: Assess existing feedback system and how they can be improved
+
+
+
+---
+  
+  
+  
+  ## What are the main Communication needs?
+  (based on urban sample)
+
+```{r echo = F, results = 'asis'}
+
+# Bar graph based on reordered variable per value
+ggplot(data=dataclean.commtopic, aes(x=reorder(variable, value) , y=value, fill=variable)) + 
+  geom_bar( stat="identity") + 
+  guides(fill=FALSE) + coord_flip()+
+  xlab("Communication Topics") + ylab("Individual") +
+  ggtitle("Main Information Topics")
+```
+
+
+---
+  
+  ## What are the main communication channels?
+  (based on urban sample)
+```{r echo = F, results = 'asis'}
+# Bar graph based on reordered variable per value
+ggplot(data=dataclean.channel, aes(x=reorder(variable, value) , y=value, fill=variable)) + 
+  geom_bar( stat="identity") + 
+  guides(fill=FALSE) + coord_flip()+
+  xlab("Communication channel") + ylab("Individual") +
+  ggtitle("Main Information Source")
+```
+
+
+---
+  
+  ## Information Source per Gender of Respondant
+  (based on urban sample)
+```{r echo = F, results = 'asis'}
+# Reorder Variable per Value
+dataclean.channel <- transform(dataclean.channel, variable=reorder(variable, -value) ) 
+# Generation of pivot table and plotting
+dataclean.infosourcepergender <- cast(dataclean.channel, pa_gender~variable, sum)
+par(las=2)# make label text perpendicular to axis
+barplot(as.matrix(dataclean.infosourcepergender),
+        main="",
+        legend = levels(dataclean.channel$pa_gender),
+        cex.names=0.9) 
+```
+
+
+---
+  
+  ## Information Source  Per owner of smartphones
+  (based on urban sample)
+```{r echo = F, results = 'asis'}
+dataclean.infosourcepersmartphone <- cast(dataclean.channel, Ac_SmartPhone~variable, sum)
+par(las=2)# make label text perpendicular to axis
+barplot(as.matrix(dataclean.infosourcepersmartphone),
+        main="",
+        legend = levels(dataclean.channel$Ac_SmartPhone),
+        cex.names=0.9)
+```
+---
+  
+  ## Information Source  Per Age Cohort
+  (based on urban sample)
+```{r echo = F, results = 'asis'}
+dataclean.infosourceperage <- cast(dataclean.channel, pa_agecohort~variable, sum)
+par(las=2)# make label text perpendicular to axis
+barplot(as.matrix(dataclean.infosourceperage),
+        main="",
+        legend = levels(dataclean.channel$pa_agecohort),
+        cex.names=0.9)
+```
+
+---
+  
+  ## Information Source  Per Accommodation type
+  (based on urban sample)
+```{r echo = F, results = 'asis'}
+dataclean.infosourceperaccom <- cast(dataclean.channel, Accom~variable, sum)
+par(las=2)# make label text perpendicular to axis
+barplot(as.matrix(dataclean.infosourceperaccom),
+        main="",
+        legend = levels(dataclean.channel$Accom),
+        cex.names=0.9)
+```
+
+---
+  ## Trust in TV as a communication channel
+  (based on urban sample)
+```{r echo = F, results = 'asis'}
+# Bar graph based on reordered variable per value
+ggplot(data=dataclean.television, aes(x=variable , y=value, fill=variable, position="stack")) + 
+  geom_bar( stat="identity") +
+  #  geom_text(aes(label=variable), vjust=0) +
+  guides(fill=FALSE) + coord_flip()+
+  xlab("Communication channel") + ylab("Individual") +
+  ggtitle("")
+```
+---
+  
+  ## Trust in Friends as a communication channel
+  (based on urban sample)
+```{r echo = F, results = 'asis'}
+# Bar graph based on reordered variable per value
+ggplot(data=dataclean.friends, aes(x=variable , y=value, fill=variable, position="stack")) + 
+  geom_bar( stat="identity") +
+  #  geom_text(aes(label=variable), vjust=0) +
+  guides(fill=FALSE) + coord_flip()+
+  xlab("Communication channel") + ylab("Individual") +
+  ggtitle("")
+
+```
+
+---
+  
+  ## Trust in Internet as a communication channel
+  (based on urban sample)
+```{r echo = F, results = 'asis'}
+
+# Bar graph based on reordered variable per value
+ggplot(data=dataclean.internet, aes(x=variable , y=value, fill=variable, position="stack")) + 
+  geom_bar( stat="identity") +
+  #  geom_text(aes(label=variable), vjust=0) +
+  guides(fill=FALSE) + coord_flip()+
+  xlab("Communication channel") + ylab("Individual") +
+  ggtitle("")
+
+```
+
+---
+  
+  ## Trust in Mobile as a communication channel
+  (based on urban sample)
+```{r echo = F, results = 'asis'}
+# Bar graph based on reordered variable per value
+ggplot(data=dataclean.mobile, aes(x=variable , y=value, fill=variable, position="stack")) + 
+  geom_bar( stat="identity") +
+  #  geom_text(aes(label=variable), vjust=0) +
+  guides(fill=FALSE) + coord_flip()+
+  xlab("Communication channel") + ylab("Individual") +
+  ggtitle("")
+```
+---
+  ##  Respondant profile
+  Smartphone Vs Age & Gender (based on urban sample)
+```{r echo = F, results = 'asis'}
+library(vcd)
+cotabplot(Freq ~Ac_SmartPhone + pa_agecohort , data=dataclean,
+          panel=cotab_sieve, gp=shading_Friendly,
+          labeling=labeling_values)
+
+```
+---
+  ##  Respondant profile 
+  Smartphone Vs  Accomodation  (based on urban sample)
+```{r echo = F, results = 'asis'}
+library(vcd)
+cotabplot(Freq ~Ac_SmartPhone + Accom  , data=dataclean,
+          panel=cotab_sieve, gp=shading_Friendly,
+          labeling=labeling_values, margins = rep(1, 4), layout = NULL,
+          text_gp = gpar(fontsize = 12), rect_gp = gpar(fill = grey(0.9)),
+          pop = TRUE, newpage = TRUE)
+```
+---
+  ##  Respondant profile 
+  Smartphone Vs Gender  (based on urban sample)
+```{r echo = F, results = 'asis'}
+library(vcd)
+cotabplot(Freq ~Ac_SmartPhone + pa_gender , data=dataclean,
+          panel=cotab_sieve, gp=shading_Friendly,
+          labeling=labeling_values, margins = rep(1, 4), layout = NULL,
+          text_gp = gpar(fontsize = 12), rect_gp = gpar(fill = grey(0.9)),
+          pop = TRUE, newpage = TRUE)
+```
+---
+  ##  Nex step in Analysis 
+  
+  
+  > -  1. Compare results in camp and urban environement
+> -  2. Analyse feedback mechanism 
+> -  3. Is there a relation between the type of communication needs and the type of communication channel?
