@@ -21,7 +21,7 @@ recoderFunc <- function(data, oldvalue, newvalue) {
 
 
 # extract on communication topics
-dataclean.commtopic <- melt(dataclean, id=c(1:19), measure=c(258:279)) 
+dataclean.commtopic <- melt(consolidated.table, id=c(1:19), measure=c(258:279)) 
 
 # extract on communication channel
 dataclean.channel <- melt(dataclean, id=c(1:19), measure=c(20:36))

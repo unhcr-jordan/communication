@@ -1,7 +1,7 @@
 ## install the packages that are not yet instaled
 
 packages <- c("ggplot2", "lattice",  "MASS", "lattice", "gvlma", "VGAM", "aod", "fields", "scatterplot3d", "cluster", 
-              "ade4",  "psych", "stringr", "ellipse", "pastecs","car","stringr", "devtools")
+              "ade4",  "psych", "stringr", "ellipse", "pastecs","car","stringr", "devtools","vcd","reshape","RColorBrewer")
 if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
   install.packages(setdiff(packages, rownames(installed.packages())))  
 }
@@ -26,6 +26,9 @@ library(gvlma)
 library(VGAM)
 library(stringr)
 library(car)
+library(vcd)
+library(reshape)
+library(RColorBrewer)
 
 ## Load additional fancy libraries
 

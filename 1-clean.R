@@ -57,12 +57,13 @@ for (j in 1:loops)
 row<-c(8,6,5,4,3,row)
 row<-sort(row,decreasing=TRUE)
 
-for (d in row){ dba=db[,-d]}
+for (d in row){ db=db[,-d]}
 
-db1<-as.data.frame(sapply(dba,gsub,pattern="NA ",replacement=""))
-db2<-as.data.frame(sapply(db1,gsub,pattern=" NA",replacement=""))
-db3<-as.data.frame(sapply(db2,gsub,pattern="  ",replacement=" "))
-db4<-as.data.frame(sapply(db3,str_trim))
+## Cleaning the content of the cells
+db<-as.data.frame(sapply(db,gsub,pattern="NA ",replacement=""))
+db<-as.data.frame(sapply(db,gsub,pattern=" NA",replacement=""))
+db<-as.data.frame(sapply(db,gsub,pattern="  ",replacement=" "))
+db4<-as.data.frame(sapply(db,str_trim))
 
 # Saved the reformatted data from Limesurvey
 write.csv(db4,"stacked_unhcr.csv")
@@ -73,7 +74,7 @@ write.csv(db4,"stacked_unhcr.csv")
 ##################################################################
 
 
-reach<-read.csv("survey_ODK_data_file.csv",header=TRUE)
+reach<- read.csv("JOR_Mass_Communications_Survey_28052014_results.csv",header=TRUE)
 #master_key <- as.data.frame(colnames(reach))
 master_key<-read.csv("key_reach_final.csv",header=TRUE)
 
@@ -86,18 +87,18 @@ for (d in delete){ reacha=reach[,-d]}
 # add a column to tell wether the data are for the camps or for the host communities
 ##################################################################
 
-names(db4)=names(reacha)
+names(reacha)=names(db4)
 
-status<-rep("camp",length(reach[,1]))
-reach<-cbind(reach,status)
-status<-rep("host",length(db[,1]))
-db<-cbind(db,status)
+status<-rep("camp",length(reacha[,1]))
+reacha<-cbind(reacha,status)
+status<-rep("host",length(db4[,1]))
+db4<-cbind(db4,status)
 
 ##################################################################
 ## Now mergin everything together
 ##################################################################
 
-master_db<-rbind(reacha,db4)
+master_db<-rbind(db4,reacha)
 master_db<-as.data.frame(sapply(master_db,gsub,pattern=",",replacement=""))
 master_db<-as.data.frame(sapply(master_db,tolower))
 
