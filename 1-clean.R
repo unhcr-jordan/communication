@@ -2,24 +2,21 @@
 
 source("0-packages.R")
 
+##################################################################
+##### Adding data collected throug LimeSurvey for the urban Case Load throug the R syntax file export
+##################################################################
 
-## Adding data collected throug LimeSurvey for the urban Case Load throug the R syntax file export
+
 source("survey_29824_R_syntax_file.R")
 
 # Subsstract rows based on Non Answered Record for Submit Date in Limesurvey
 db <-data[!rowSums(is.na(data["submitdate"])), ]
 
 #key <- as.data.frame(colnames(db))
-
 key <-read.csv("heading_name.csv",header=TRUE)
+
+## Format as used in ODK
 quer<-read.csv("key_unhcr.csv",header=TRUE)
-
-## Adding data collected through OpenData kit in Zaatari
-
-reach<-read.csv("survey_ODK_data_file.csv",header=TRUE)
-#master_key <- as.data.frame(colnames(reach))
-
-master_key<-read.csv("key_reach_final.csv",header=TRUE)
 key_choice<-read.csv("key_choice.csv",header=TRUE)
 
 
@@ -60,29 +57,60 @@ for (j in 1:loops)
 row<-c(8,6,5,4,3,row)
 row<-sort(row,decreasing=TRUE)
 
-for (d in row){ db=db[,-d]}
+for (d in row){ dba=db[,-d]}
 
-db<-as.data.frame(sapply(db,gsub,pattern="NA ",replacement=""))
-db<-as.data.frame(sapply(db,gsub,pattern=" NA",replacement=""))
-db<-as.data.frame(sapply(db,gsub,pattern="  ",replacement=" "))
-db<-as.data.frame(sapply(db,str_trim))
+db1<-as.data.frame(sapply(dba,gsub,pattern="NA ",replacement=""))
+db2<-as.data.frame(sapply(db1,gsub,pattern=" NA",replacement=""))
+db3<-as.data.frame(sapply(db2,gsub,pattern="  ",replacement=" "))
+db4<-as.data.frame(sapply(db3,str_trim))
 
-write.csv(db,"stacked_unhcr.csv")
+# Saved the reformatted data from Limesurvey
+write.csv(db4,"stacked_unhcr.csv")
+
+
+##################################################################
+## Adding data collected through OpenData kit in Zaatari
+##################################################################
+
+
+reach<-read.csv("survey_ODK_data_file.csv",header=TRUE)
+#master_key <- as.data.frame(colnames(reach))
+master_key<-read.csv("key_reach_final.csv",header=TRUE)
+
 
 delete<-sort(na.omit(master_key[,6]),decreasing=TRUE)
-for (d in delete){ reach=reach[,-d]}
-names(db)=names(reach)
+
+for (d in delete){ reacha=reach[,-d]}
+
+##################################################################
+# add a column to tell wether the data are for the camps or for the host communities
+##################################################################
+
+names(db4)=names(reacha)
+
 status<-rep("camp",length(reach[,1]))
 reach<-cbind(reach,status)
 status<-rep("host",length(db[,1]))
 db<-cbind(db,status)
 
-master_db<-rbind(reach,db)
+##################################################################
+## Now mergin everything together
+##################################################################
+
+master_db<-rbind(reacha,db4)
 master_db<-as.data.frame(sapply(master_db,gsub,pattern=",",replacement=""))
 master_db<-as.data.frame(sapply(master_db,tolower))
+
+##################################################################
+## Final Recoding
+##################################################################
 
 for (q in 1:length(names(master_db)))
 {master_db[,q]<-recode(master_db[,q],"'yes'=1;'no'=0;'null'=NA;'na'=NA")}
 
+consolidated.table <- master_db
 
 write.csv(master_db,"merge_mass_com_final.csv")
+
+# Clean workspace for next phase
+rm(list=setdiff(ls(), "consolidated.table"))
