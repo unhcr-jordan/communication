@@ -5,17 +5,17 @@ source("survey_29824_R_syntax_file.R")
 # Subsstract rows based on Non Answered Record for Submit Date in Limesurvey
 db <-data[!rowSums(is.na(data["submitdate"])), ]
 
-key <- as.data.frame(colnames(db))
+#key <- as.data.frame(colnames(db))
 
-#key1 <-read.csv("heading_name.csv",header=TRUE)
+key <-read.csv("heading_name.csv",header=TRUE)
 quer<-read.csv("key_unhcr.csv",header=TRUE)
 
 ## Adding data collected through OpenData kit in Zaatari
 
 reach<-read.csv("survey_ODK_data_file.csv",header=TRUE)
-master_key <- as.data.frame(colnames(reach))
+#master_key <- as.data.frame(colnames(reach))
 
-#master_key<-read.csv("key_reach_final.csv",header=TRUE)
+master_key<-read.csv("key_reach_final.csv",header=TRUE)
 key_choice<-read.csv("key_choice.csv",header=TRUE)
 
 
