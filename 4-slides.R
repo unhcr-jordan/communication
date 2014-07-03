@@ -1,10 +1,4 @@
-## install sliddify
-
-library(devtools)
-install_github('slidify', 'ramnathv')
-install_github('slidifyLibraries', 'ramnathv')
-
-library(slidify)
+source("2-analysis.R")
 
 # Creating now the folder where the presentation will be developped
 author("slides")

@@ -1,4 +1,8 @@
-#test
+#load required packages
+
+source("0-packages.R")
+
+
 ## Adding data collected throug LimeSurvey for the urban Case Load throug the R syntax file export
 source("survey_29824_R_syntax_file.R")
 
@@ -19,8 +23,6 @@ master_key<-read.csv("key_reach_final.csv",header=TRUE)
 key_choice<-read.csv("key_choice.csv",header=TRUE)
 
 
-cle<-key[,2]
-name_db<-as.character(cle)
 name_or<-names(db)
 before<-as.character(key_choice[,3])
 after<-as.character(key_choice[,2])
@@ -31,10 +33,8 @@ db<-as.data.frame(sapply(db,gsub,pattern=",",replacement=""))
 for( i in 1:599) 
 {
   choice<-as.data.frame(strsplit(name_or[i],"_",fixed=TRUE))
-  names(db)[i]<-name_db[i]
   name_or[i]<-as.character(choice[length(choice[,1]),1])
   for (z in 1:length(key_choice[,1])) {if(name_or[i]==key_choice[z,3]){name_or[i]<-as.character(key_choice[z,2])}}
-  attributes(db)$variable.labels[i]<-name_db[i]
   db[,i]<-as.character(db[,i])
   if(levels(as.factor(db[,i]))[1]!="No"|is.na(levels(as.factor(db[,i]))[1]!="No")){db[,i]<-recode(db[,i],"'Not selected'=NA;'Yes'=name_or[i]")}
 }
@@ -66,7 +66,6 @@ db<-as.data.frame(sapply(db,gsub,pattern="NA ",replacement=""))
 db<-as.data.frame(sapply(db,gsub,pattern=" NA",replacement=""))
 db<-as.data.frame(sapply(db,gsub,pattern="  ",replacement=" "))
 db<-as.data.frame(sapply(db,str_trim))
-
 write.csv(db,"stacked_unhcr.csv")
 
 delete<-sort(na.omit(master_key[,6]),decreasing=TRUE)
@@ -80,8 +79,6 @@ master_db<-rbind(reach,db)
 master_db<-as.data.frame(sapply(master_db,gsub,pattern=",",replacement=""))
 master_db<-as.data.frame(sapply(master_db,tolower))
 
-## Recoding questions with Yes or No
 for (q in 1:length(names(master_db)))
 {master_db[,q]<-recode(master_db[,q],"'yes'=1;'no'=0;'null'=NA;'na'=NA")}
-
 write.csv(master_db,"merge_mass_com_final.csv")

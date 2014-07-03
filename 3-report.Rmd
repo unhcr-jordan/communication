@@ -23,7 +23,7 @@ Data preparation
 
 ```{r}
 # RGet all data frame generated int he previous analysis phase
-source("analysis.R")
+source("2-analysis.R")
 
 ```
 
