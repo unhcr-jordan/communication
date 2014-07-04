@@ -8,9 +8,6 @@ if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
 
 ## Load all libraries
 
-library(rMaps)
-library(rCharts)
-library(slidify)
 library(MASS)
 library(lattice)
 library(ellipse) 
@@ -42,3 +39,5 @@ library(rCharts)
 
 #install_github('slidify', 'ramnathv')
 #install_github('slidifyLibraries', 'ramnathv')
+
+library(slidify)

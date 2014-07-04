@@ -27,6 +27,7 @@ yes_no<-c(levels(db$Ac_SmartPhone))
 
 db<-as.data.frame(sapply(db,gsub,pattern=",",replacement=""))
 
+# Re-encode the results of the question
 for( i in 1:599) 
 {
   choice<-as.data.frame(strsplit(name_or[i],"_",fixed=TRUE))
@@ -37,7 +38,7 @@ for( i in 1:599)
 }
 db<-as.data.frame(sapply(db,gsub,pattern=" ",replacement="_"))
 
-
+## When multiple choice questions, merge the result in one column
 loops<-length(quer[,1])
 cnt<-0
 row<-1
@@ -57,6 +58,9 @@ for (j in 1:loops)
 row<-c(8,6,5,4,3,row)
 row<-sort(row,decreasing=TRUE)
 
+## Db
+dbback <- db
+
 for (d in row){ db=db[,-d]}
 
 ## Cleaning the content of the cells
@@ -65,8 +69,7 @@ db<-as.data.frame(sapply(db,gsub,pattern=" NA",replacement=""))
 db<-as.data.frame(sapply(db,gsub,pattern="  ",replacement=" "))
 db4<-as.data.frame(sapply(db,str_trim))
 
-# Saved the reformatted data from Limesurvey
-write.csv(db4,"stacked_unhcr.csv")
+
 
 
 ##################################################################
@@ -74,14 +77,26 @@ write.csv(db4,"stacked_unhcr.csv")
 ##################################################################
 
 
-reach<- read.csv("JOR_Mass_Communications_Survey_28052014_results.csv",header=TRUE)
-#master_key <- as.data.frame(colnames(reach))
+odkdump <- read.csv("JOR_Mass_Communications_Survey_28052014_results.csv",header=TRUE)
+
+# Remove meta data from ODK
+odkdump1 <- odkdump[,-(3:6),drop=FALSE]
+reach <- odkdump1[,-(6),drop=FALSE]
+
+key_odk_or <- as.data.frame(colnames(reach))
+
+# map column names 
 master_key<-read.csv("key_reach_final.csv",header=TRUE)
 
-
+# Delete columns that are not in the reformatted limesurvey dataset
 delete<-sort(na.omit(master_key[,6]),decreasing=TRUE)
 
-for (d in delete){ reacha=reach[,-d]}
+reacha <- reach
+
+for (d in delete){ reacha=reacha[,-d]}
+
+
+
 
 ##################################################################
 # add a column to tell wether the data are for the camps or for the host communities
@@ -91,8 +106,21 @@ names(reacha)=names(db4)
 
 status<-rep("camp",length(reacha[,1]))
 reacha<-cbind(reacha,status)
+
 status<-rep("host",length(db4[,1]))
 db4<-cbind(db4,status)
+
+## Comparing variables names between the 2 data set
+key_odk_key <- as.data.frame(colnames(reacha))
+key_limesurvey_key <- as.data.frame(colnames(db4))
+
+
+#write.csv(key_odk_key,"odk_key.csv")
+#write.csv(key_limesurvey_key,"limesurvey_key.csv")
+
+# Saved the reformatted data 
+write.csv(db4,"stacked_limesurvey.csv")
+write.csv(reacha,"stacked_odk.csv")
 
 ##################################################################
 ## Now mergin everything together
