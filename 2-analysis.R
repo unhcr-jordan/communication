@@ -78,3 +78,104 @@ changelabeltopic <- data.frame(Original = c("Issues_aidregistration","Issues_MoI
                                        "ServicesForChild","Insecurity","IssuesReturn","LeaveCamp","Civil","Disabilities","News", "Work", "Cash", "Resettlement"))  
 
 dataclean.commtopic$variable <- recoderFunc(dataclean.commtopic$variable, changelabeltopic$Original, changelabeltopic$New) 
+
+
+
+
+
+
+
+##rm(list=ls(all=TRUE))
+
+
+
+############################################
+###bivariate logistic
+db <- consolidated.table
+a <-db
+warn <-getOption("warn") 
+options(warn=2) 
+dep<-391 #dependent variable index
+datab<-as.data.frame(db[,391])
+name_datab<-c("dependent_variable_name")
+model_num<-c("dependent_variable_index")
+row_coeff<-c("name","cat","Estimate","Std.Error","z value","P_value")
+for(j in c(391))
+{
+  for (i in 1:length(names(db)))
+  {
+    g<-data.frame(na.omit(a[,c(j,i)]))
+    f<-as.character(names(db)[i])
+    k<-as.character(names(db)[j])
+    n<-paste("REGRESSION DUMMIES:",k,"VS",f,"/",j,"VS",i)
+    mod<-try(glm(g[,1]~g[,2],family ="binomial"),silent=T)
+    if(is(mod,"try-error")){next}
+    coeff<-summary(mod)
+    coeff<-coeff$coefficients
+    coeff<-as.data.frame(coeff)
+    p_value<-coeff[2,4]
+    p_value2<-coeff[3,4]
+    p_value3<-coeff[4,4]
+    if(p_value<=0.05&!is.na(p_value)|p_value2<=0.05&!is.na(p_value2)|p_value3<=0.05&!is.na(p_value3))
+    {
+      y<-length(coeff[,1])
+      for (z in 2:y)
+      { 
+        out_coef<-c(f,rownames(coeff[z,]),coeff[z,])
+        row_coeff<-rbind(row_coeff,out_coef)
+      }
+      
+      try(cat(n,file="glm.txt",sep="\n",append=TRUE))
+      out<-capture.output(summary(mod))
+      try(cat(out,file="glm.txt",sep="\n",append=TRUE))
+      out<-paste("-----------------------------------------------------------------------------")
+      try(cat(out,file="glm.txt",sep="\n",append=TRUE))
+      datab<-cbind(datab,db[,i])
+      name_datab<-c(name_datab,f)
+      model_num<-c(model_num,i)
+    }
+  }
+}
+
+write.csv(row_coeff,"bivariate_regression.csv")
+
+#bivariate linear
+
+warn <-getOption("warn") 
+options(warn=2)
+dep<-391 #dependent variable index
+datab<-as.data.frame(db[,dep])
+name_datab<-c("dependent_variable_name")
+model_num<-c("dependent_variable_index")
+row_coeff_lm<-c("name","cat","adjusted R square","R square","Estimate","Std.Error","z value","P_value")
+for(j in c(dep))
+{
+  for (i in 8:length(names(db)))
+  {
+    g<-data.frame(na.omit(a[,c(j,i)]))
+    f<-as.character(names(db)[i])
+    k<-as.character(names(db)[j])
+    n<-paste("REGRESSION DUMMIES:",k,"VS",f,"/",j,"VS",i)
+    mod<-try(lm(g[,1]~g[,2]),silent=T)
+    if(is(mod,"try-error")){next}
+    coeff<-summary(mod)
+    coeff<-coeff$coefficients
+    coeff<-as.data.frame(coeff)
+    p_value<-coeff[2,4]
+    adjrsquare<-summary(mod)$adj.r.squared
+    rsquare<-summary(mod)$r.squared
+    if(p_value<=0.05&!is.na(p_value)|p_value2<=0.05&!is.na(p_value2)|p_value3<=0.05&!is.na(p_value3))
+    {
+      y<-length(coeff[,1])
+      for (z in 2:y)
+      { 
+        out_coef_lm<-c(f,adjrsquare,rsquare,rownames(coeff[z,]),coeff[z,])
+        row_coeff_lm<-rbind(row_coeff_lm,out_coef_lm)
+      }
+    }
+  }
+}
+
+write.csv(row_coeff_lm,"bivariate_linear_regression.csv")
+
+

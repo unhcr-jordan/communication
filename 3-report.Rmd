@@ -200,6 +200,189 @@ ggplot(data=consolidated.table, aes(x=535 , y=12, fill=535)) +
 
 
 
+Mass Communication Survey: Econometrics Analysis
+========================================================
+
+Q9) [Issues] Which important issues does your household need information on?
+A9) Registration for official aid with UNHCR [Issues_REGISTRATION_UNHCR_registration]
+- [Issues_REGISTRATION_UNHCR_registration] is a dummy variable that takes value “1” if refugee states he needs information on registering for official aid; takes value “0” if he states he does not need information on registering for official aid with UNHCR
+
+QUESTION: What Information Sources are associated with the lowest “issues” for registration for official aid with UNHCR?
+
+
+### Univariate Regressions:
+ - On 17 variables with [Issues_REGISTRATION_UNHCR_registration] as dependent variable and “Information Source” as independent variables; a YES signifies the variable can explain at least 1% of the variation in [Issues_REGISTRATION_UNHCR_registration]
+
+```{r}
+#NO
+reg1<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Television, datasetwcamp) 
+
+#NO, but almost stat. sig. at 10%
+reg2<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Mobile, datasetwcamp)
+
+#N0  
+reg3<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Internet_news, datasetwcamp) 
+
+#N0
+reg4<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Facebook, datasetwcamp) 
+
+#N0
+reg5<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Twitter, datasetwcamp) 
+
+#N0, byt stat. sig. at 5%
+reg6<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Notice_Board_or_Poster, datasetwcamp)
+
+#NO
+reg7<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Newspapers_or_Magazines, datasetwcamp)
+
+#NO
+reg8<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Leaflets, datasetwcamp)
+
+#NO, but stat. sig. at 5%
+reg9<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Radio, datasetwcamp)* 
+
+#YES, and stat. sig. at 0.1%  
+reg10<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Friends_and_Family, datasetwcamp)
+
+#YES, and stat. sig. at 0.1%
+reg11<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Community_Leaders, datasetwcamp)
+
+#NO
+reg12<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Religious_Institutions_Mosque_Church_etc, datasetwcamp)
+
+#NO
+reg13<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Jordanian_Government_Officials, datasetwcamp)
+
+#NO, but stat sig. at 5%
+reg14<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_UNHCR, datasetwcamp)
+
+#NO
+reg15<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Other_Humanitarian_Workers_NGOs_CBOs, datasetwcamp)
+
+#NO, but stat. sig. at 14%
+reg16<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Health_Centres_Schools_Community_Centres, datasetwcamp) 
+
+#NO
+reg17<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Short_film_video_clip, datasetwcamp)
+
+#NO
+reg18<-lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_other, datasetwcamp)
+
+
+```
+
+**Comment:** in italics are variables selected for model. Multivariate regressions with 7, 6 and 5 explanatory variables were estimated. Information Source UNHCR and Information Source Health Centers Schools Community Centers were excluded from the final model (here below) as found highly statistically insignificant when controlling for the other Information Source covariates.
+
+
+### Multivariate Regression (full dataset; 5 variables):
+```{r}
+regFD <- lm(Issues_REGISTRATION_UNHCR_registration ~
+              InformationSource_Radio +
+              InformationSource_Friends_and_Family+InformationSource_Community_Leaders +
+              InformationSource_Mobile +
+              InformationSource_Notice_Board_or_Poster,
+            datasetwcamp)
+
+```
+
+#**Comment:** Information Sources “Friends and Family”, “Community Leaders” and "Radio" are negatively 
+associated with Need of Information for Official Aid Registration. Thus, if Friends and Family and/or 
+Community Leaders and/or Radio is the Information Source, refugees are a lot less likely to need information on how to register for official aid with UNHCR. 
+
+**Trust in Information Sources:**
+- Radio: too many NA’s in data
+- Friends and Family: most answers reflect “full” and “moderate” trust
+- Community Leaders: most answers reflect “moderate” trust
+- Mobile: most answers reflect “full” trust
+- Notice Board or Poster: too many NA’s in data
+
+**Comment:** Information Sources found statistically significant in regression are trusted.
+
+*Tests:**
+```{r}
+#approx. 1% hence multicollinearity not an issue
+vif(regFD) 
+
+#no evidence of model mis-specification
+resettest(regFD) 
+
+coefs<-names(coef(regFD)) 
+
+#the above unrestricted model is fine
+linearHypothesis(regFD,coefs[-1],white.adjust="hc0") 
+```
+
+### Multivariate Regression (subsets; 5 variables):
+
+**Female and Male Principal Representative of Household Subset Regressions:**
+```{r}
+
+regSF <- lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Radio + 
+              InformationSource_Friends_and_Family +
+              InformationSource_Community_Leaders +
+              InformationSource_Mobile + 
+              InformationSource_Notice_Board_or_Poster, 
+            subset(datasetwcamp,pa_gender=="female"))
+
+regSM <- lm(Issues_REGISTRATION_UNHCR_registration~InformationSource_Radio +
+              InformationSource_Friends_and_Family +
+              InformationSource_Community_Leaders +
+              InformationSource_Mobile +
+              InformationSource_Notice_Board_or_Poster, subset(datasetwcamp,pa_gender=="male"))
+
+```
+**Comment::** loss in predictive power in Female model; positive and negative associations remain 
+
+unaltered (except Mobile in Female model, but highly statistically insignificant)
+
+**Further Analysis on Gender Principal Representative of Household:**
+
+```{r}
+
+missue<-datasetwcamp[pa_gender=="male",105]
+ #Average value of [Issues_REGISTRATION_UNHCR_registration] (need for information on official registration) 
+#for female-only principal representative of household subset = 0.395
+mean(missue)
+
+fissue<-datasetwcamp[pa_gender=="female",105]
+#Average value of [Issues_REGISTRATION_UNHCR_registration] (need for information on official registration) 
+#for male-only principal representative of household subset = 0.422
+mean(fissue) 
+
+#Log-differences between PA_female and Registration Issues and PA_male and Registration Issues is = 0.067
+log(mean(missue)) - log(mean(fissue)) 
+
+```
+
+**Comment:** on average households with a male principal representative have more issues on finding information on how to register for official aid with UNHCR, there is a gender gap of almost 7%.
+
+
+**Camp and Non-Camp (Host) Subset Regressions:**
+
+```{r}
+regSC <- lm(Issues_REGISTRATION_UNHCR_registration ~
+              InformationSource_Radio +
+              InformationSource_Friends_and_Family +
+              InformationSource_Community_Leaders +
+              InformationSource_Mobile+InformationSource_Notice_Board_or_Poster,
+            subset(datasetwcamp,Camp=="1"))
+
+regSH <- lm(Issues_REGISTRATION_UNHCR_registration
+            ~InformationSource_Radio +
+              InformationSource_Friends_and_Family +
+              InformationSource_Community_Leaders +
+              InformationSource_Mobile+InformationSource_Notice_Board_or_Poster, subset(datasetwcamp,Camp=="0"))
+```
+
+**Comment**: in the camp-only data there is stronger explanatory power than in the full dataset for variables "Friends and Family" and "Comminity Leaders", but less for "Radio"; loss of predictive power in host-only data
+
+
+### Limitations:
+Regression models have a low Coefficient of Determination, they can therefore explain little of what is happening in Registration Issues given the explanatory variables chosen; this is normal as we regressed only dummy variables.
+
+
+
+
 Inference to develop strategies
 ========================================================
   Is there a relation between the type of communication needs and the type of communication channel?
