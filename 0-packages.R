@@ -32,9 +32,9 @@ library(RColorBrewer)
 library(devtools)
 
 #install_github("rgbif", "ropensci")
-#install_github('ramnathv/rCharts@dev')
+#install_github('ramnathv/rCharts')
 #install_github('ramnathv/rMaps')
-library(rMaps)
+#library(rMaps)
 library(rCharts)
 
 #install_github('slidify', 'ramnathv')
